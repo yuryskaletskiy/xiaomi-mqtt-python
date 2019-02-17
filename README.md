@@ -9,3 +9,24 @@ based on the following code sample: https://github.com/jon1012/mihome
 
 ## Mi Aqara Protocol 
 - See here: https://aqara.gitbooks.io/lumi-gateway-lan-communication-api/content/
+
+## Using Docker image
+
+### How to pack
+
+```bash
+docker build . -t xiaomi-mqtt
+```
+
+### How to use
+
+- Create and run shell script run_xiaomi_mqtt.sh
+
+```bash
+#!/bin/sh
+docker rm xiaomi-mqtt --force
+docker run \
+        --name xiaomi-mqtt -d \
+        --restart always \
+        xiaomi-mqtt
+```

@@ -22,16 +22,13 @@ setup(name='xiaomi_mqtt',
       keywords='xiaomi udp mqtt iot mi home aqara',
       author='Yury Skaletskiy',
       author_email='yury.skaletskiy@gmail.com',
-      #url='https://notes.jmsinfor.com/blog/post/admin/Xiaomi-Hub',
       url='https://github.com/yuryskaletskiy/xiaomi_mqtt_python',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
+      scripts=['xiaomi_mqtt_gateway'],
       zip_safe=False,
-      install_requires=[
-          # -*- Extra requirements: -*-
-          # "future"
-      ],
+      install_requires=['paho-mqtt'],
       entry_points="""
       # -*- Entry points: -*-
       """,
