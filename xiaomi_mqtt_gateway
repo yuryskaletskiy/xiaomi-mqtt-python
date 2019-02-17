@@ -6,6 +6,7 @@ import argparse
 import paho.mqtt.client as mqtt
 from xiaomi_mqtt.connector import XiaomiConnector
 from xiaomi_mqtt.mqtt import MqttBridge
+from xiaomi_mqtt.homie import HomieMqttExporter
 
 parser = argparse.ArgumentParser(description='Xiaomi-to-MQTT gateway')
 
@@ -15,6 +16,8 @@ parser.add_argument('--mqtt-user', help='MQTT user name', default=None)
 parser.add_argument('--mqtt-password', help='MQTT password', default=None)
 
 parser.add_argument('--log-level', help='console log level (DEBUG, INFO, WARN, ERROR)', default="INFO")
+
+parser.add_argument('--auto-rediscovery', default=False, type=bool, help="refresh HOMIE3 metadata on each device's value change")
 
 args = parser.parse_args()
 
@@ -45,6 +48,8 @@ def prepare_mqtt():
 
     return client
 
+mqtt_client = prepare_mqtt()
+homie_exporter = HomieMqttExporter(mqtt_client)
 
 def push_data(client, model, sid, cmd, data):
     for key, value in data.items():
@@ -57,11 +62,8 @@ def push_data(client, model, sid, cmd, data):
 
 def on_metadata(connector, sid, payload):
     logging.info("METADATA CHANGED: sid {}: {}".format(sid, payload))
+    homie_exporter.export_devices(connector.get_devices().values())
 
-
-def on_report(connector, sid, data):
-    ldata = connector.get_devices()[sid]['_last_data']
-    logging.info("REPORT: sid {}: {}".format(sid, ldata))
 
 
 def on_data(connector, cmd, sid, payload):
@@ -69,11 +71,15 @@ def on_data(connector, cmd, sid, payload):
     #     connector.send_get_id_list(payload['sid'])
 
     if cmd == "report":
-        on_report(connector, payload['sid'], payload['data'])
+        device = connector.get_devices()[sid]
+        logging.info("REPORT: sid {}".format(sid))
+
+        if args.auto_rediscovery:
+            homie_exporter.export_device(device)
+        homie_exporter.export_device_data(device)
 
 
 if __name__ == "__main__":
-    mqtt_client = prepare_mqtt()
     mqtt_client.loop_start()
 
     connector = XiaomiConnector(data_callback=on_data, metadata_callback=on_metadata)

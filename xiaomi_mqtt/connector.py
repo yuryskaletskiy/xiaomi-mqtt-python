@@ -120,7 +120,12 @@ class XiaomiConnector:
 
         dev = self._devices[sid]
 
-        dev["_last_data"] = data
+        # update field-by-field
+        if "_last_data" not in dev:
+            dev["_last_data"] = dict()
+
+        for k in data.keys():
+            dev["_last_data"][k] = data[k]
 
     def _handle_iam(self, payload):
         """
@@ -128,18 +133,22 @@ class XiaomiConnector:
         {'cmd': 'iam', 'port': '9898', 'sid': '7c49eb88faaf', 'model': 'gateway', 'proto_version': '1.1.2', 'ip': '192.168.10.8'}
         """
 
+        new_device = False
+
         sid = payload['sid']
         if sid not in self._devices:
             self._devices[sid] = dict()
             logging.info("Auto-discovered device {} sid {} model {}".format(sid, payload['sid'], payload['model']))
-            if self.metadata_callback is not None:
-                self.metadata_callback(self, sid, payload)
+            new_device = True
 
         device = self._devices[sid]
 
         for field in payload.keys():
             device[field] = payload[field]
         self._heartbeat(sid)
+
+        if self.metadata_callback is not None and new_device:
+            self.metadata_callback(self, sid, payload)
 
     def _heartbeat(self, sid, token = None):
         if sid not in self._devices:

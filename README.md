@@ -8,7 +8,9 @@ based on the following code sample: https://github.com/jon1012/mihome
 - Dockerfile included
 
 ## Mi Aqara Protocol 
-- See here: https://aqara.gitbooks.io/lumi-gateway-lan-communication-api/content/
+See here: 
+- https://aqara.gitbooks.io/lumi-gateway-lan-communication-api/content/
+- http://docs.opencloud.aqara.cn/en/development/gateway-LAN-communication/
 
 ## Using Docker image
 
