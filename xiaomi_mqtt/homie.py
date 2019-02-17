@@ -56,11 +56,11 @@ class HomieMqttExporter:
 
         if model == 'sensor_ht':
             if "temperature" in ldata:
-                value = int(ldata["temperature"]) / 100
+                value = round(int(ldata["temperature"]) / 100)
                 self._pub_device_node_property_value(sid, 'sensor_ht', 'temperature', value)
 
             if "humidity" in ldata:
-                value = int(ldata["humidity"]) / 100
+                value = round(int(ldata["humidity"]) / 100)
                 self._pub_device_node_property_value(sid, 'sensor_ht', 'humidity', value)
 
 
