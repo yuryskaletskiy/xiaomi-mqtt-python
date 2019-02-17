@@ -31,6 +31,12 @@ class HomieMqttExporter:
             self._pub_device_node_properties(sid, 'magnet', ['status'])
             self._pub_device_node_property_meta(sid, 'magnet', 'status', "boolean", "Open Status")
 
+        if model == 'sensor_hr':
+            self._pub_device_single_node(sid, 'sensor_hr', 'Temperature and Humidity Sensor')
+            self._pub_device_node_properties(sid, 'sensor_hr', ['temperature', 'humidity'])
+            self._pub_device_node_property_meta(sid, 'sensor_hr', 'temperature', "float", "Temperature", 'Celsius')
+            self._pub_device_node_property_meta(sid, 'sensor_hr', 'humidity', "float", "Humidity", 'Percent')
+
 
     def export_device_data(self, dev):
         logging.debug("Homie export device data: {}".format(dev))
@@ -46,8 +52,18 @@ class HomieMqttExporter:
 
         if model == 'magnet':
             status_value = "OFF" if ldata["status"] != "open" else "ON"
-
             self._pub_device_node_property_value(sid, 'magnet', 'status', status_value)
+
+        if model == 'sensor_ht':
+            if "temperature" in ldata:
+                value = int(ldata["temperature"]) / 100
+                self._pub_device_node_property_value(sid, 'sensor_hr', 'temperature', value)
+
+            if "humidity" in ldata:
+                value = int(ldata["humidity"]) / 100
+                self._pub_device_node_property_value(sid, 'sensor_hr', 'humidity', value)
+
+
 
     def _pub_device(self, dev_id, dev_name, dev_status):
         self.client.publish("homie/{}/$homie".format(dev_id), "3.0")
