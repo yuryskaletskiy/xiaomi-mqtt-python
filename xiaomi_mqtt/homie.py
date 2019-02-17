@@ -24,18 +24,18 @@ class HomieMqttExporter:
         model = dev['model']
         sid = dev['sid']
 
-        self._pub_device(sid, 'Xiaomi Magnet Device', 'ready')
-
         if model == 'magnet':
+            self._pub_device(sid, 'Xiaomi Magnet Device', 'ready')
             self._pub_device_single_node(sid, 'magnet', 'Magnet Status')
             self._pub_device_node_properties(sid, 'magnet', ['status'])
             self._pub_device_node_property_meta(sid, 'magnet', 'status', "boolean", "Open Status")
 
         if model == 'sensor_ht':
-            self._pub_device_single_node(sid, 'sensor_ht', 'Temperature and Humidity Sensor')
+            self._pub_device(sid, 'Xiaomi Temperature and Humidity Sensor', 'ready')
+            self._pub_device_single_node(sid, 'sensor_ht', 'Temperature and Humidity')
             self._pub_device_node_properties(sid, 'sensor_ht', ['temperature', 'humidity'])
-            self._pub_device_node_property_meta(sid, 'sensor_ht', 'temperature', "float", "Temperature", 'Celsius')
-            self._pub_device_node_property_meta(sid, 'sensor_ht', 'humidity', "float", "Humidity", 'Percent')
+            self._pub_device_node_property_meta(sid, 'sensor_ht', 'temperature', "float", "Temperature", '°C')
+            self._pub_device_node_property_meta(sid, 'sensor_ht', 'humidity', "float", "Humidity", '%')
 
 
     def export_device_data(self, dev):

@@ -17,7 +17,7 @@ parser.add_argument('--mqtt-password', help='MQTT password', default=None)
 
 parser.add_argument('--log-level', help='console log level (DEBUG, INFO, WARN, ERROR)', default="INFO")
 
-parser.add_argument('--auto-rediscovery', default=False, type=bool, help="refresh HOMIE3 metadata on each device's value change")
+parser.add_argument('--auto-rediscovery', default=True, type=bool, help="refresh HOMIE3 metadata on each device's value change")
 
 args = parser.parse_args()
 
