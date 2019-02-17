@@ -27,6 +27,8 @@ docker build . -t xiaomi-mqtt
 docker rm xiaomi-mqtt --force
 docker run \
         --name xiaomi-mqtt -d \
-        --restart always \
-        xiaomi-mqtt
+        --restart always --network host \
+        xiaomi-mqtt \
+        xiaomi_mqtt_gateway \
+        --mqtt-user=test --mqtt-password=test --mqtt-host=127.0.0.1
 ```

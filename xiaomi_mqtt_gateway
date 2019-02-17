@@ -1,28 +1,50 @@
 #!/usr/bin/env python3
 # coding: utf-8
+import logging, sys
+from logging import _nameToLevel
+import argparse
 import paho.mqtt.client as mqtt
-import logging
 from xiaomi_mqtt.connector import XiaomiConnector
+from xiaomi_mqtt.mqtt import MqttBridge
 
-MQTT_SERVER = "192.168.10.177"
+
+parser = argparse.ArgumentParser(description='Xiaomi-to-MQTT gateway')
+
+parser.add_argument('--mqtt-host', default="localhost", help='MQTT broker hostname')
+parser.add_argument('--mqtt-port', type=int, default=1883, help='MQTT broker port')
+parser.add_argument('--mqtt-user', help='MQTT user name', default=None)
+parser.add_argument('--mqtt-password', help='MQTT password', default=None)
+
+parser.add_argument('--log-level', help='console log level (DEBUG, INFO, WARN, ERROR)', default="INFO")
+
+
+args = parser.parse_args()
+
 MQTT_PORT = 1883
 MQTT_USER = 'test'
 MQTT_PASSWORD = 'test'
 
 PATH_FMT = "xiaomi/{model}/{sid}/{prop}" # short_id or sid ?
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s:%(message)s', level=_nameToLevel[args.log_level])
+
+logging.info("Starting Xiaomi MQTT gateway app...")
+
 
 def prepare_mqtt():
 
+    userstr = "anonymous" if args.mqtt_user is None else args.mqtt_user
+
+    logging.info("Creating MQTT connection {}@{}:{}".format(userstr, args.mqtt_host, args.mqtt_port))
+
     client = mqtt.Client()
-    if MQTT_USER is not None:
+    if args.mqtt_user is not None:
         client.username_pw_set(
-            MQTT_USER,
-            MQTT_PASSWORD,
+            args.mqtt_user,
+            args.mqtt_password,
         )
 
-    client.connect(MQTT_SERVER, MQTT_PORT, 60)
+    client.connect(args.mqtt_host, args.mqtt_port, 60)
 
     return client
 
@@ -34,8 +56,6 @@ def push_data(client, model, sid, cmd, data):
                              cmd=cmd,
                              prop=key)
       client.publish(path, payload=value, qos=0)
-
-
 
 
 def on_metadata(connector, sid, payload):
@@ -64,7 +84,7 @@ if __name__ == "__main__":
         while True:
             connector.check_incoming()
 
-     except KeyboardInterrupt:
-        logger.info('gateway stopped')
+    except KeyboardInterrupt:
+        logging.info('gateway stopped')
         mqtt_client.loop_stop()
         sys.exit(0)
