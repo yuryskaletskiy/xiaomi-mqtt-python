@@ -7,7 +7,7 @@ def readme():
     with open('README.md') as f:
         return f.read()
 
-setup(name='xiaomi-mqtt',
+setup(name='xiaomi_mqtt',
       version=version,
       description="Xiaomi Mi Home Python MQTT brigde",
       long_description=readme(),

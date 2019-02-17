@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 import logging
-from mihome.connector import XiaomiConnector
+from xiaomi_mqtt.connector import XiaomiConnector
 
 MQTT_SERVER = "192.168.10.177"
 MQTT_PORT = 1883
