@@ -7,7 +7,6 @@ import paho.mqtt.client as mqtt
 from xiaomi_mqtt.connector import XiaomiConnector
 from xiaomi_mqtt.mqtt import MqttBridge
 
-
 parser = argparse.ArgumentParser(description='Xiaomi-to-MQTT gateway')
 
 parser.add_argument('--mqtt-host', default="localhost", help='MQTT broker hostname')
@@ -17,14 +16,13 @@ parser.add_argument('--mqtt-password', help='MQTT password', default=None)
 
 parser.add_argument('--log-level', help='console log level (DEBUG, INFO, WARN, ERROR)', default="INFO")
 
-
 args = parser.parse_args()
 
 MQTT_PORT = 1883
 MQTT_USER = 'test'
 MQTT_PASSWORD = 'test'
 
-PATH_FMT = "xiaomi/{model}/{sid}/{prop}" # short_id or sid ?
+PATH_FMT = "xiaomi/{model}/{sid}/{prop}"  # short_id or sid ?
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=_nameToLevel[args.log_level])
 
@@ -32,7 +30,6 @@ logging.info("Starting Xiaomi MQTT gateway app...")
 
 
 def prepare_mqtt():
-
     userstr = "anonymous" if args.mqtt_user is None else args.mqtt_user
 
     logging.info("Creating MQTT connection {}@{}:{}".format(userstr, args.mqtt_host, args.mqtt_port))
@@ -50,12 +47,12 @@ def prepare_mqtt():
 
 
 def push_data(client, model, sid, cmd, data):
-  for key, value in data.items():
-      path = PATH_FMT.format(model=model,
-                             sid=sid,
-                             cmd=cmd,
-                             prop=key)
-      client.publish(path, payload=value, qos=0)
+    for key, value in data.items():
+        path = PATH_FMT.format(model=model,
+                               sid=sid,
+                               cmd=cmd,
+                               prop=key)
+        client.publish(path, payload=value, qos=0)
 
 
 def on_metadata(connector, sid, payload):
@@ -65,6 +62,7 @@ def on_metadata(connector, sid, payload):
 def on_report(connector, sid, data):
     ldata = connector.get_devices()[sid]['_last_data']
     logging.info("REPORT: sid {}: {}".format(sid, ldata))
+
 
 def on_data(connector, cmd, sid, payload):
     # if cmd == "iam":
