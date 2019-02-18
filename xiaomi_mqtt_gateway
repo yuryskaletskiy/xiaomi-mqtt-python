@@ -27,7 +27,7 @@ MQTT_PASSWORD = 'test'
 
 PATH_FMT = "xiaomi/{model}/{sid}/{prop}"  # short_id or sid ?
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=_nameToLevel[args.log_level])
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=_nameToLevel[args.log_level])
 
 logging.info("Starting Xiaomi MQTT gateway app...")
 
